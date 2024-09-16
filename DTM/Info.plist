@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>app-1-184964843639-ios-c3b8aae25445e1b78c5e72</string>
+			</array>
+		</dict>
+	</array>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Modern Era.ttf</string>
+		<string>SF-Pro.ttf</string>
+		<string>NewYork.ttf</string>
+		<string>ModernEra-Bold.otf</string>
+		<string>ModernEra-Medium.otf</string>
+	</array>
+</dict>
+</plist>
