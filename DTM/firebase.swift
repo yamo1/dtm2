@@ -513,8 +513,8 @@ func checkDoubleMatch(name: String, completion: @escaping (Bool) -> Void) async 
                         for element in thirdElement {
                             if element.key.prefix(5) == "match" {
                                 print(element.value)
-                                for doubleName in element.value {
-                                    var parts = doubleName.split(separator: "&")
+                                for i in 1...2 {
+                                    var parts = element.value[i].split(separator: "&")
                                     if parts[0] == name || parts[1] == name {
                                         print(parts)
                                         completion(true)
@@ -527,7 +527,7 @@ func checkDoubleMatch(name: String, completion: @escaping (Bool) -> Void) async 
                             }
                         }
                     } else {
-                        print("3つ目の要素が文字列ではありません")
+                        print("データ型が指定された形式ではなかった")
                     }
                 }
             }
@@ -539,9 +539,58 @@ func checkDoubleMatch(name: String, completion: @escaping (Bool) -> Void) async 
 }
 
 // キャンセル、confirm時にドキュメントを削除
+func doubleDelete(name: String) {
+    let db = Firestore.firestore()
+    let ref = db.collection("doubledates").document(name)
+    ref.delete()
+}
 
 
 // confirmされたときに、stateに追加する
+func doubleState(name1: String, name2: String) async throws {
+    let db = Firestore.firestore()
+    let ref = db.collection("doubledates").document("events")
+
+    do {
+        // ドキュメントを取得
+        let document = try await ref.getDocument()
+        if document.exists {
+            if let data = document.data() {
+                // キーの最大値を取得
+                let maxKey = data.keys.compactMap { Int($0) }.max()
+                
+                // 最大キーが存在する場合
+                if let maxKey = maxKey, let maxData = data["\(maxKey)"] as? [Any] {
+                    // 3番目の要素を取得 (stateフィールドを含む)
+                    if let thirdElement = maxData[2] as? [String: Any] {
+                        if let stateArray = thirdElement["state"] as? [String] {
+                            // 既存のstate配列に新しいペアを追加
+                            let newPair = "\(name1)&\(name2)"
+                            
+                            // Firestoreの`arrayUnion`を使って新しいペアを追加
+                            try await ref.updateData([
+                                "\(maxKey).2.state": FieldValue.arrayUnion([newPair])
+                            ])
+                            
+                            print("新しいペアが追加されました: \(newPair)")
+                        } else {
+                            print("stateフィールドが存在しないか、配列ではありません")
+                        }
+                    } else {
+                        print("指定された形式でデータがありません")
+                    }
+                } else {
+                    print("最大キーが見つかりませんでした")
+                }
+            }
+        } else {
+            print("ドキュメントが存在しません")
+        }
+    } catch {
+        print("エラー: \(error.localizedDescription)")
+        throw error
+    }
+}
 
 
 
