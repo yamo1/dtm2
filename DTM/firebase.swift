@@ -594,7 +594,6 @@ func doubleState(name1: String, name2: String) async throws {
 
 
 
-
 func matchDelete(to: String, completion: @escaping (Bool) -> Void) {
     let db = Firestore.firestore()
     let matchRef = db.collection("match").document("to\(to)")
